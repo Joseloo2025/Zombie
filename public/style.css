@@ -1,0 +1,538 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #111;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#lobby, #mainMenu, #createRoom, #roomList, #joinRoom, #deathScreen, 
+#settingsMenu, #historyMenu, #missionsMenu {
+    background-color: #222;
+    /* padding: 2rem; */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    /* max-width: 600px; */
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+h1, h2, h3 {
+    color: #0f0;
+    margin-top: 0;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    margin: 10px 0;
+    width: 200px;
+    background: #333;
+    color: white;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #0a0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin: 5px;
+}
+
+button:hover {
+    background: #0f0;
+}
+
+canvas {
+    background-color: #000;
+    border: 2px solid #0f0;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    margin: 0 auto;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.character-selection {
+    margin: 20px 0;
+}
+
+.characters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.character {
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding: 10px;
+    border-radius: 5px;
+    background: #333;
+}
+
+.character:hover {
+    transform: scale(1.05);
+    background: #444;
+}
+
+.character.selected {
+    border: 2px solid #0f0;
+    background: #444;
+}
+
+.character img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
+
+.room-item {
+    background: #333;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.room-item button {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+#deathScreen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+}
+
+#deathScreen h2 {
+    color: #f00;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+#deathStats {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+#deathStats p {
+    margin: 8px 0;
+    font-size: 18px;
+}
+
+#deathStats span {
+    color: #0f0;
+    font-weight: bold;
+}
+
+#gameOverScreen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+    width: 90%;
+    max-width: 500px;
+}
+
+#gameOverTitle {
+    color: #f00;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+#gameOverText {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+#gameOverStats {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+#gameOverStats p {
+    margin: 8px 0;
+    font-size: 18px;
+}
+
+#gameOverStats span {
+    color: #0f0;
+    font-weight: bold;
+}
+
+/* Ajustes */
+#settingsMenu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+}
+
+.setting {
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.setting label {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.setting input[type="range"] {
+    width: 200px;
+}
+
+/* Historial y Misiones */
+#historyMenu, #missionsMenu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.history-item, .mission-item {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.history-item h3, .mission-item h3 {
+    color: #0f0;
+    margin: 5px 0;
+}
+
+.history-item p, .mission-item p {
+    margin: 5px 0;
+}
+
+.mission-item .progress-bar {
+    height: 5px;
+    background: #333;
+    margin: 5px 0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.mission-item .progress {
+    height: 100%;
+    background: #0f0;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+.mission-item .reward {
+    color: gold;
+    font-weight: bold;
+}
+
+.mission-item.completed {
+    border-left: 4px solid #0f0;
+}
+
+/* Efectos de buffos */
+.buff-indicator {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+}
+
+.buff-active {
+    color: lime;
+    font-weight: bold;
+}
+
+/* Prompt de compra */
+.purchase-prompt {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    z-index: 10;
+}
+
+/* Notificación de misión */
+.mission-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #0f0;
+    padding: 15px 25px;
+    border-radius: 5px;
+    font-size: 18px;
+    text-align: center;
+    z-index: 10;
+    border: 2px solid #0f0;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+/* Ventana de estadísticas */
+.stats-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid #0f0;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    z-index: 200;
+    color: white;
+}
+
+.stats-window h3 {
+    color: #0f0;
+    text-align: center;
+    margin-top: 0;
+}
+
+.stats-window .player-list {
+    margin: 20px 0;
+}
+
+.stats-window .player-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.stats-window .player-you {
+    color: #0f0;
+    font-weight: bold;
+}
+
+.stats-window .zombie-stats {
+    margin-top: 20px;
+}
+
+.stats-window .zombie-stat {
+    margin: 5px 0;
+}
+
+.stats-window .normal-zombie {
+    color: white;
+}
+
+.stats-window .elite-zombie {
+    color: orange;
+}
+
+.stats-window .boss-zombie {
+    color: red;
+}
+
+.stats-window .close-hint {
+    text-align: center;
+    margin-top: 20px;
+    color: #0f0;
+    font-style: italic;
+}
+
+/* Indicador de granada */
+.grenade-indicator {
+    position: fixed;
+    bottom: 50px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    border-left: 3px solid orange;
+}
+
+.grenade-cooldown {
+    position: fixed;
+    bottom: 50px;
+    left: 20px;
+    height: 3px;
+    background: rgba(255, 100, 0, 0.5);
+    border-radius: 2px;
+}
+
+/* Efectos climáticos */
+.weather-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.sandstorm-effect {
+    background-color: rgba(210, 180, 140, 0.3);
+}
+
+.fog-effect {
+    background-color: rgba(160, 160, 160, 0.4);
+}
+
+.bloodrain-effect {
+    background-color: rgba(138, 3, 3, 0.2);
+}
+
+/* Misiones en juego */
+.mission-tracker {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 250px;
+    z-index: 10;
+    border: 1px solid #0f0;
+}
+
+.mission-tracker h4 {
+    color: #0f0;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #0f0;
+    padding-bottom: 5px;
+}
+
+.mission-tracker-item {
+    margin: 5px 0;
+    font-size: 12px;
+}
+
+.mission-tracker-item .progress {
+    height: 3px;
+    background: #333;
+    margin: 2px 0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.mission-tracker-item .progress-bar {
+    height: 100%;
+    background: #0f0;
+    width: 0%;
+}
+
+.mission-tracker-item.completed {
+    color: #0f0;
+}
+
+/* Pantalla completa */
+:fullscreen {
+    background-color: black;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #lobby, #mainMenu, #createRoom, #roomList, #joinRoom, 
+    #deathScreen, #settingsMenu, #historyMenu, #missionsMenu {
+        padding: 1rem;
+        width: 95%;
+    }
+    
+    .characters {
+        gap: 10px;
+    }
+    
+    .character img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    .mission-tracker {
+        max-width: 200px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    input {
+        width: 90%;
+    }
+    
+    .characters {
+        flex-direction: column;
+    }
+    
+    .mission-tracker {
+        max-width: 150px;
+        right: 10px;
+        top: 10px;
+    }
+}
+
+#gameCanvas {
+    width: 100% !important;
+    height: 100% !important;
+}
