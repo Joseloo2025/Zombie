@@ -22,15 +22,15 @@ const POWERUP_DURATION = 30000;
 const POWERUP_DESPAWN_TIME = 10000;
 const REVIVE_TIME = 5000;
 const GRENADE_DAMAGE = 50;
-const GRENADE_RADIUS = 50;
+const GRENADE_RADIUS = 100;
 const GRENADE_DELAY = 5000;
 const GRENADE_COOLDOWN = 25000;
 const HEALTH_REGEN_INTERVAL = 10000;
 const HEALTH_REGEN_AMOUNT = 1;
 const MAX_QUICK_REVIVE = 3;
 const GRID_SIZE = 100;
-const MAP_WIDTH = 1360;
-const MAP_HEIGHT = 768;
+const MAP_WIDTH = 910;
+const MAP_HEIGHT = 705;
 
 class ZombiePool {
     constructor() {
@@ -142,19 +142,27 @@ function getZombieDamage(round, zombieType) {
 function generateZombies(room) {
     if (room.zombies.length >= getMaxZombiesForRound(room.round)) return;
 
-    const roll = Math.random() * 100;
+    const roll = Math.random();
     let zombieType = 'normal';
     
-    if (room.isEliteRound && roll < 0.4) {
-        zombieType = 'elite';
-        if (room.round >= 10 && room.round % 10 === 0) {
-            zombieType = 'boss';
+    // Elite rounds (cada 5 rondas)
+    if (room.isEliteRound) {
+        if (roll < 0.6) {  // 60% de chance de zombie élite en ronda élite
+            zombieType = 'elite';
+            // Boss rounds (cada 10 rondas)
+            if (room.round >= 10 && room.round % 10 === 0 && roll < 0.3) {
+                zombieType = 'boss';
+            }
         }
-    } else if (room.round > 5 && roll < 0.15) {
-        const specialRoll = Math.random();
-        if (specialRoll < 0.4) zombieType = 'rusher';
-        else if (specialRoll < 0.7) zombieType = 'tank';
-        else zombieType = 'explosive';
+    } 
+    // Rondas normales
+    else if (room.round > 5) {
+        if (roll < 0.15) { // 15% de chance de zombie especial
+            const specialRoll = Math.random();
+            if (specialRoll < 0.4) zombieType = 'rusher';
+            else if (specialRoll < 0.7) zombieType = 'tank';
+            else zombieType = 'explosive';
+        }
     }
 
     const z = zombiePool.getZombie();
@@ -176,7 +184,6 @@ function generateZombies(room) {
 
 function updateZombies(room) {
     const grid = updateCollisionGrid(room);
-    const playersInDanger = {};
     
     room.zombies.forEach(z => {
         const zombieSize = z.isBoss ? 24 : z.isElite ? 20 : 16;
@@ -211,6 +218,51 @@ function updateZombies(room) {
             if (dist > 0) {
                 z.x += (dx / dist) * speed;
                 z.y += (dy / dist) * speed;
+            }
+            
+            // Verificar colisión con jugadores
+            if (dist < zombieSize + 16) { // Radio del jugador + radio del zombie
+                if (Date.now() > closestPlayer.invulnerableUntil) {
+                    let damage = z.damage;
+                    // Aplicar modificador de daño por bloodrain
+                    if (room.weatherEvent === 'bloodrain' && room.weatherEffects.zombieDamageBoost) {
+                        damage *= room.weatherEffects.zombieDamageBoost;
+                    }
+                    
+                    closestPlayer.hp = Math.max(0, closestPlayer.hp - damage);
+                    closestPlayer.lastHitTime = Date.now();
+                    closestPlayer.invulnerableUntil = Date.now() + 1000;
+                    
+                    io.to(closestPlayer.id).emit('playerHit', { damage: damage, currentHp: closestPlayer.hp });
+                    
+                    if (closestPlayer.hp <= 0) {
+                        if (closestPlayer.buffs?.QuickRevive) {
+                            closestPlayer.isDowned = true;
+                            closestPlayer.downedTime = Date.now();
+                            delete closestPlayer.buffs.QuickRevive;
+                            io.to(room.id).emit('buffDisabled', { buffType: 'Quick Revive' });
+                            io.to(room.id).emit('playerDowned', { 
+                                playerId: closestPlayer.id,
+                                downedTime: closestPlayer.downedTime
+                            });
+                        } else {
+                            closestPlayer.score = Math.max(0, closestPlayer.score - 5);
+                            closestPlayer.buffs = {};
+                            closestPlayer.isDowned = false;
+                            io.to(room.id).emit('playerRespawned', { 
+                                playerId: closestPlayer.id,
+                                buffsCleared: true
+                            });
+                            io.to(room.id).emit('showDeathScreen', {
+                                playerId: closestPlayer.id,
+                                round: room.round,
+                                zombiesKilled: closestPlayer.zombiesKilled ? 
+                                    (closestPlayer.zombiesKilled.normal + closestPlayer.zombiesKilled.elite + closestPlayer.zombiesKilled.boss) : 0,
+                                score: closestPlayer.score
+                            });
+                        }
+                    }
+                }
             }
         } else {
             // Movimiento aleatorio si no hay jugadores cercanos
@@ -407,7 +459,7 @@ function updateGrenades(room) {
             
             for (const playerId in room.players) {
                 const p = room.players[playerId];
-                if (p.hp > 0 && !p.isDowned && !p.buffs?.PhDFlopper) {  // <-- Verifica si NO tiene PhD Flopper
+                if (p.hp > 0 && !p.isDowned && !p.buffs?.PhDFlopper) {
                     const dist = Math.sqrt(Math.pow(p.x - g.x, 2) + Math.pow(p.y - g.y, 2));
                     
                     if (dist < GRENADE_RADIUS && Date.now() > p.invulnerableUntil) {

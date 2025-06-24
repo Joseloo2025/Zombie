@@ -8,24 +8,24 @@
 </head>
 <body>
     <!-- Menú principal -->
-    <div id="lobby">
+    <div id="lobby" style="width: 30%; margin: auto;margin-top: 200px;">
         <h1>Zombie Survival</h1>
         <input id="nameInput" placeholder="Tu nombre" maxlength="15" />
         <button onclick="showMainMenu()">Inicio</button>
     </div>
 
     <!-- Menú principal después de ingresar nombre -->
-    <div id="mainMenu" style="display:none;">
+    <div id="mainMenu" style="display:none;width: 15%; margin: auto;margin-top: 200px;">
         <h2>Menú Principal</h2>
-        <button onclick="showCreateRoom()">Crear Sala</button>
-        <button onclick="showRoomList()">Listado de Salas</button>
-        <button onclick="showSettings()">Ajustes</button>
-        <button onclick="showHistory()">Historial</button>
-        <button onclick="showMissions()">Misiones</button>
+        <button onclick="showCreateRoom()" style="width: 90%;" >Crear Sala</button>
+        <button onclick="showRoomList()" style="width: 90%;" >Listado de Salas</button>
+        <button onclick="showSettings()" style="width: 90%;" >Ajustes</button>
+        <button onclick="showHistory()" style="width: 90%;" >Historial</button>
+        <button onclick="showMissions()" style="width: 90%;" >Misiones</button>
     </div>
 
     <!-- Menú para crear sala -->
-    <div id="createRoom" style="display:none;">
+    <div id="createRoom" style="display:none;width: 60%; margin: auto;margin-top: 200px;">
         <h2>Crear Sala</h2>
         <input id="roomName" placeholder="Nombre de la sala" maxlength="20" />
         <div class="character-selection">
@@ -54,7 +54,7 @@
     </div>
 
     <!-- Listado de salas -->
-    <div id="roomList" style="display:none;">
+    <div id="roomList" style="display:none;width: 30%; margin: auto;margin-top: 100px;">
         <h2>Salas Disponibles</h2>
         <div id="roomsContainer"></div>
         <button onclick="backToMainMenu()">Volver</button>
@@ -115,7 +115,7 @@
     </div>
     
     <!-- Ajustes -->
-    <div id="settingsMenu" style="display:none;">
+    <div id="settingsMenu" style="display:none;width: 50%; margin: auto;">
         <h2>Ajustes</h2>
         <div class="setting">
             <label>Volumen General:</label>
@@ -133,14 +133,14 @@
     </div>
 
     <!-- Historial -->
-    <div id="historyMenu" style="display:none;">
+    <div id="historyMenu" style="display:none;width: 50%; margin: auto;">
         <h2>Historial de Partidas</h2>
         <div id="historyList"></div>
         <button onclick="backToMainMenu()">Volver</button>
     </div>
     
     <!-- Misiones -->
-    <div id="missionsMenu" style="display:none;">
+    <div id="missionsMenu" style="display:none;width: 50%; margin: auto;">
         <h2>Misiones Activas</h2>
         <div id="missionsList"></div>
         <button onclick="backToMainMenu()">Volver</button>
