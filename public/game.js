@@ -939,6 +939,7 @@ socket.on('buffPurchased', ({playerId, buffType}) => {
         }
 
         if (buffType === 'Quick Revive') {
+            quickRevivePurchases = (quickRevivePurchases || 0) + 1; // <--- AGREGA ESTA LÍNEA
             showFloatingText(
                 `QUICK REVIVE (${MAX_QUICK_REVIVE - quickRevivePurchases} restantes)`,
                 players[myId].x, players[myId].y - 30,

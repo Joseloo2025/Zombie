@@ -728,6 +728,16 @@ io.on('connection', socket => {
             return;
         }
 
+        if (
+            buffType === 'Quick Revive' &&
+            (
+                (player.quickRevivePurchases || 0) >= MAX_QUICK_REVIVE ||
+                player.buffs?.QuickRevive // <-- Esto bloquea la compra si ya tiene el buff activo
+            )
+        ) {
+            return;
+        }        
+
         player.score -= price;
         
         if (!player.buffs) player.buffs = {};
