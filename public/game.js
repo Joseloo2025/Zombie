@@ -29,6 +29,7 @@ let floatingTexts = [];
 let roundTransition = false;
 let roundTransitionStart = 0;
 const ROUND_TRANSITION_DURATION = 2000;
+const MAX_QUICK_REVIVE = 3; // O el valor que corresponda
 let isDowned = false;
 let reviveProgress = 0;
 let reviveInterval = null;
@@ -431,6 +432,14 @@ function renderPlayers() {
         if (id === myId && p.hp < p.maxHp && Date.now() - p.lastHitTime > 10000) {
             ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
             ctx.fillRect(p.x - 50, p.y - 35, 100 * (p.hp / p.maxHp), 2);
+        }
+
+        // AQUÍ VA EL NUEVO CÓDIGO PARA MOSTRAR LOS REVIVES
+        if (id === myId && p.buffs?.QuickRevive) {
+            ctx.fillStyle = 'cyan';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Revives: ${MAX_QUICK_REVIVE - quickRevivePurchases}`, p.x, p.y + 25);
         }
     }
 }
@@ -927,14 +936,6 @@ socket.on('buffPurchased', ({playerId, buffType}) => {
         if (buffType === 'Juggernog') {
             players[myId].maxHp = 200;
             players[myId].hp = 200;
-        }
-
-        // En la función que renderiza al jugador
-        if (player.buffs?.QuickRevive) {
-            ctx.fillStyle = 'cyan';
-            ctx.font = '10px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(`Revives: ${MAX_QUICK_REVIVE - quickRevivePurchases}`, player.x, player.y + 25);
         }
 
         if (buffType === 'Quick Revive') {
